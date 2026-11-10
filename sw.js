@@ -1,5 +1,5 @@
-const CACHE = "hikeyfx-shell-v5";
-const FILES = ["./", "./index.html", "./manifest.json", "./icon.svg"];
+const CACHE = "hikeyfx-shell-v6";
+const FILES = ["./", "./index.html", "./manifest.json", "./icon.svg", "./i18n.js"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
