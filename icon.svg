@@ -1,1 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#071426"/><path d="M90 350 190 250l70 55 155-155" fill="none" stroke="#22d3c5" stroke-width="35" stroke-linecap="round" stroke-linejoin="round"/><path d="M335 150h80v80" fill="none" stroke="#22d3c5" stroke-width="35" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="75" fill="#000"/>
+
+  <!-- Crown -->
+  <path d="M190 105 L210 130 L230 115 L256 145 L282 115 L302 130 L322 105 L310 155 L202 155Z" fill="#FFE000"/>
+  <circle cx="190" cy="105" r="6" fill="#FFE000"/>
+  <circle cx="230" cy="115" r="6" fill="#FFE000"/>
+  <circle cx="256" cy="90" r="6" fill="#FFE000"/>
+  <circle cx="282" cy="115" r="6" fill="#FFE000"/>
+  <circle cx="322" cy="105" r="6" fill="#FFE000"/>
+
+  <!-- H and M lettering -->
+  <text x="95" y="300" font-family="serif" font-size="245" font-weight="bold" fill="#FFE000">H</text>
+  <text x="325" y="300" font-family="serif" font-size="115" font-weight="bold" fill="#FFE000">M</text>
+
+  <!-- Bull and chart emblem -->
+  <ellipse cx="256" cy="205" rx="105" ry="75" fill="#000" stroke="#FFE000" stroke-width="5"/>
+  <g fill="#fff">
+    <path d="M180 230 Q195 200 220 205 L245 185 Q275 170 295 190 L320 185 L310 200 L325 205 L310 215 Q300 245 275 235 L250 250 Q220 260 200 250 L185 265 L175 260Z"/>
+    <path d="M290 190 L305 175 L325 178 L310 190Z"/>
+  </g>
+  <g fill="#fff">
+    <rect x="195" y="190" width="9" height="35"/>
+    <rect x="215" y="175" width="9" height="45"/>
+    <rect x="235" y="160" width="9" height="55"/>
+  </g>
+
+  <!-- HFX -->
+  <path d="M45 345 H145 M367 345 H467" stroke="#FFE000" stroke-width="9" stroke-linecap="round"/>
+  <text x="256" y="375" text-anchor="middle" font-family="Arial" font-size="68" font-weight="bold" fill="#FFE000">HFX</text>
+
+  <!-- Tagline -->
+  <text x="256" y="425" text-anchor="middle" font-family="Arial" font-size="29" font-weight="bold" fill="#fff">forex intelligence</text>
+</svg>
