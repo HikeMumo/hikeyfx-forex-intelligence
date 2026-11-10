@@ -19,10 +19,11 @@ serve(async (req) => {
     }
     const apiKey = Deno.env.get("RESEND_API_KEY");
     const destination = Deno.env.get("HIKEYFX_SUPPORT_EMAIL");
-    if (!apiKey || !destination) throw new Error("Support email service is not configured.");
+    const sender = Deno.env.get("HIKEYFX_FROM_EMAIL");
+    if (!apiKey || !destination || !sender) throw new Error("Support email service is not configured.");
     const resend = new Resend(apiKey);
     const result = await resend.emails.send({
-      from: "HIKEYFX Help Desk <onboarding@resend.dev>",
+      from: sender,
       to: [destination],
       replyTo,
       subject: "HIKEYFX support: " + topic,
