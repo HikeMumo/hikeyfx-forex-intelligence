@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071426"><link rel="manifest" href="manifest.json">
+<title>HIKEYFX FOREX INTELLIGENCE</title>
+<style>
+:root{color-scheme:dark;--bg:#071426;--panel:#10243b;--line:#25415c;--cyan:#22d3c5;--muted:#9bb0c5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#eef6ff;font:15px system-ui,Arial,sans-serif}
+main{max-width:1100px;margin:auto;padding:20px}.brand{color:var(--cyan);font-weight:800;letter-spacing:1.5px;font-size:clamp(20px,4vw,30px)}
+.sub{color:var(--muted);margin:4px 0 20px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+h2{font-size:17px;margin:0 0 12px}.big{font-size:32px;font-weight:800}.muted{color:var(--muted)}input,select,button{font:inherit;border-radius:10px;padding:12px;border:1px solid var(--line);background:#081a2d;color:#fff;width:100%}
+button{background:var(--cyan);color:#04202a;font-weight:800;border:0;cursor:pointer;margin-top:10px}
+.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}.signal{font-size:26px;font-weight:900}.buy{color:#45df9b}.sell{color:#ff7777}.wait{color:#ffd166}
+.stat{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:9px 0;gap:10px}
+canvas{width:100%;height:220px;background:#091b2e;border-radius:10px}
+small{line-height:1.5}.notice{font-size:13px;color:var(--muted);line-height:1.5}
+@media(max-width:650px){main{padding:14px}.grid{grid-template-columns:1fr}.row{flex-direction:column}.big{font-size:27px}}
+</style></head>
+<body><main>
+<div class="brand">HIKEYFX</div><div class="sub">FOREX INTELLIGENCE · EURUSD ANALYSIS</div>
+<div class="grid">
+<section class="card"><h2>Market Data Connection</h2>
+<p class="notice">Connect a Twelve Data API key to retrieve EUR/USD candles. Keep your key private. This prototype stores it only in this browser.</p>
+<input id="apiKey" type="password" autocomplete="off" placeholder="Paste your Twelve Data API key">
+<div class="row"><select id="interval"><option value="15min">15 minutes</option><option value="1h">1 hour</option><option value="4h">4 hours</option><option value="1day">1 day</option></select><button id="connect">Save key & analyse</button></div>
+<p id="status" class="notice">Not connected.</p></section>
+<section class="card"><h2>EUR/USD Signal</h2><div id="signal" class="signal wait">WAIT</div><div id="price" class="big">—</div><div id="updated" class="muted">Waiting for market data</div>
+<div class="stat"><span>Directional score</span><b id="score">—</b></div><div class="stat"><span>RSI (14)</span><b id="rsi">—</b></div><div class="stat"><span>EMA 20 / EMA 50</span><b id="emas">—</b></div></section>
+<section class="card"><h2>Recent EUR/USD candles</h2><canvas id="chart" width="900" height="260"></canvas><p class="notice">Simplified close-price plot, not a broker execution chart.</p></section>
+<section class="card"><h2>How the analysis works</h2><div class="stat"><span>Trend</span><b id="trend">—</b></div><div class="stat"><span>Momentum</span><b id="momentum">—</b></div><div class="stat"><span>Data candles</span><b id="count">—</b></div><p class="notice">Signals are rule-based calculations using EMA, RSI and recent momentum. They are not guaranteed predictions and have not been proven profitable by backtesting.</p></section>
+</div>
+<p class="notice">HIKEYFX is an independent analysis prototype. It does not connect to MT5, access broker accounts, or place trades. Market-data availability and refresh frequency depend on your provider plan. Never risk money based only on this signal.</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let closes=[];
+function ema(a,n){let k=2/(n+1),v=a[0];for(let i=1;i<a.length;i++)v=a[i]*k+v*(1-k);return v}
+function rsi(a,n=14){if(a.length<=n)return null;let g=0,l=0;for(let i=a.length-n;i<a.length;i++){let d=a[i]-a[i-1];if(d>0)g+=d;else l-=d}if(l===0)return 100;return 100-100/(1+g/l)}
+function draw(a){let c=$("chart"),x=c.getContext("2d"),w=c.width,h=c.height;x.clearRect(0,0,w,h);if(a.length<2)return;let lo=Math.min(...a),hi=Math.max(...a),pad=18;x.strokeStyle="#22d3c5";x.lineWidth=3;x.beginPath();a.forEach((v,i)=>{let px=pad+i*(w-2*pad)/(a.length-1),py=h-pad-(v-lo)/(hi-lo||1)*(h-2*pad);i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke()}
+async function analyse(){let key=$("apiKey").value.trim()||localStorage.getItem("hikeyfx_td_key");if(!key){$("status").textContent="Enter your Twelve Data API key first.";return}
+$("status").textContent="Fetching EUR/USD candles…";localStorage.setItem("hikeyfx_td_key",key);
+try{let iv=$("interval").value;let url=`https://api.twelvedata.com/time_series?symbol=EUR/USD&interval=${encodeURIComponent(iv)}&outputsize=100&apikey=${encodeURIComponent(key)}`;let res=await fetch(url);let data=await res.json();if(!res.ok||data.status==="error"||!data.values)throw new Error(data.message||"No candle data returned. Check the key, symbol or API quota.");
+let vals=data.values.slice().reverse();closes=vals.map(v=>Number(v.close)).filter(Number.isFinite);if(closes.length<51)throw new Error("Not enough candles returned for the EMA 50 calculation.");
+let e20=ema(closes.slice(-80),20),e50=ema(closes.slice(-150),50),rv=rsi(closes),mom=closes.at(-1)-closes.at(-6);
+let score=0;if(e20>e50)score+=40;else score-=40;if(rv!==null){if(rv>52&&rv<70)score+=25;else if(rv<48&&rv>30)score-=25}if(mom>0)score+=35;else if(mom<0)score-=35;
+let sig=score>=45?"BUY":score<=-45?"SELL":"WAIT";$("signal").textContent=sig;$("signal").className="signal "+sig.toLowerCase();$("price").textContent=closes.at(-1).toFixed(5);$("updated").textContent="Latest candle: "+vals.at(-1).datetime;
+$("score").textContent=(score>0?"+":"")+score+"/100";$("rsi").textContent=rv===null?"—":rv.toFixed(1);$("emas").textContent=e20.toFixed(5)+" / "+e50.toFixed(5);$("trend").textContent=e20>e50?"Bullish":"Bearish";$("momentum").textContent=mom>0?"Positive":"Negative";$("count").textContent=closes.length;draw(closes.slice(-60));$("status").textContent="Market data loaded successfully.";
+}catch(e){$("status").textContent="Connection error: "+e.message}}
+$("connect").addEventListener("click",analyse);if(localStorage.getItem("hikeyfx_td_key"))$("apiKey").placeholder="Saved key in this browser — enter again to replace";
+if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script></body></html>
