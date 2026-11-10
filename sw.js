@@ -1,4 +1,4 @@
-const CACHE = "hikeyfx-shell-v4";
+const CACHE = "hikeyfx-shell-v5";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", event => {
